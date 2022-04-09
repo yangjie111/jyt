@@ -1,0 +1,29 @@
+{
+  "name": "jyt-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon ./src/main.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ali-oss": "^6.17.1",
+    "axios": "^0.26.1",
+    "dotenv": "^16.0.0",
+    "jsonwebtoken": "^8.5.1",
+    "koa": "^2.13.4",
+    "koa-bodyparser": "^4.3.0",
+    "koa-multer": "^1.0.2",
+    "koa-ratelimit": "^5.0.1",
+    "koa-router": "^10.1.1",
+    "mysql2": "^2.3.3",
+    "raw-body": "^2.5.1",
+    "xml2js": "^0.4.23"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  }
+}
