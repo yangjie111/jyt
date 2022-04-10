@@ -1,4 +1,5 @@
 const connection = require('../../app/database')
+const config = require('../../app/config/app_config')
 
 class MomentService {
   async addMoment(basicData) {
@@ -39,8 +40,22 @@ class MomentService {
   }
 
   async getMomentCreateTimeById(momentId) {
-    const statement = `SELECT createAt FROM moment WHERE id = ?`
+    const statement = `SELECT DATE_FORMAT(createAt,'%Y-%m-%d %H:%i:%S') createAt FROM moment WHERE id = ?`
     const result = await connection.execute(statement, [momentId])
+    return result
+  }
+
+  async getMomentDataByStatus(count = 10, offset = 0) {
+    const statement = `
+    SELECT 
+    m.id,m.describe,m.contactInfo,m.cost,
+    JSON_OBJECT('id',m.user_id,'avatar',CONCAT('${config.APP_HOST}:${config.APP_PORT}','/avatar/',(SELECT avatarIndex FROM user u WHERE m.user_id = u.id))) 'user',
+    (SELECT fileUrl FROM file WHERE file.moment_id = m.id LIMIT 1) 'img'
+    FROM moment m 
+    JOIN file f ON m.id = f.moment_id
+    GROUP BY m.id
+    LIMIT ${count} OFFSET ${offset}`;
+    const [result] = await connection.execute(statement)
     return result
   }
 }
