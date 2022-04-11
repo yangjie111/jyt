@@ -1,5 +1,6 @@
 const connection = require('../../app/database')
 const config = require('../../app/config/app_config')
+const getStatementByTagId = require('../../utils/getStatementByTagId')
 
 class MomentService {
   async addMoment(basicData) {
@@ -45,17 +46,17 @@ class MomentService {
     return result
   }
 
-  async getMomentDataByStatus(count = 10, offset = 0) {
+  async getMomentDataByStatus(offset = 0, tagId) {
     const statement = `
     SELECT 
-    m.id,m.describe,m.contactInfo,m.cost,
+    m.id,m.describe,m.cost,
     JSON_OBJECT('id',m.user_id,'avatar',CONCAT('${config.APP_HOST}:${config.APP_PORT}','/avatar/',(SELECT avatarIndex FROM user u WHERE m.user_id = u.id))) 'user',
     (SELECT fileUrl FROM file WHERE file.moment_id = m.id LIMIT 1) 'img'
-    FROM moment m 
-    JOIN file f ON m.id = f.moment_id
+    ${getStatementByTagId(tagId)}
     GROUP BY m.id
-    LIMIT ${count} OFFSET ${offset}`;
-    const [result] = await connection.execute(statement)
+    ORDER BY m.createAt DESC
+    LIMIT 10 OFFSET ${offset}`;
+    const [result] = await connection.execute(statement, Number(tagId) ? [tagId] : [])
     return result
   }
 }

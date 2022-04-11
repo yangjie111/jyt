@@ -59,11 +59,13 @@ class MomentContrller {
    * 获取数据
   */
   async getMomentData(ctx, next) {
-    const { count, offset } = ctx.query
+    const { offset, tagId } = ctx.query
     try {
-      const result = await MomentService.getMomentDataByStatus(count, offset)
+      const result = await MomentService.getMomentDataByStatus(offset, tagId)
+      const hasMore = result.length >= 10 || false
       ctx.body = {
         result,
+        hasMore,
         message: '获取成功'
       }
     } catch (error) {
