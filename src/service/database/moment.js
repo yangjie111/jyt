@@ -59,6 +59,22 @@ class MomentService {
     const [result] = await connection.execute(statement, Number(tagId) ? [tagId] : [])
     return result
   }
+
+  async getMomentDataByUIdAndStatus(userId, offset, momentStatus) {
+    const statement = `SELECT 
+    m.id,m.describe,m.contactInfo,m.cost,
+    JSON_OBJECT('id',m.user_id,'avatar',CONCAT('${config.APP_HOST}:${config.APP_PORT}','/avatar/',(SELECT avatarIndex FROM user u WHERE m.user_id = u.id))) 'user',
+    (SELECT fileUrl FROM file WHERE file.moment_id = m.id LIMIT 1) 'img',
+    DATE_FORMAT(createAt,'%Y-%m-%d %H:%i:%S') createAt
+    FROM moment m 
+    JOIN file f ON m.id = f.moment_id
+    WHERE m.user_id = ? AND m.moment_status = ?
+    GROUP BY m.id
+    ORDER BY m.createAt DESC
+    LIMIT 10 OFFSET ${offset}`;
+    const [result] = await connection.execute(statement, [userId, momentStatus])
+    return result
+  }
 }
 
 module.exports = new MomentService()

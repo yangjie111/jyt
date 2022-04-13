@@ -1,7 +1,7 @@
 const Router = require('koa-router')
 const momentRouter = new Router({ prefix: "/moment" })
 
-const { addMoment, addTags, addFile, getMomentData } = require('../contrller/moment')
+const { addMoment, addTags, addFile, getMomentData, getMomentDataByUId } = require('../contrller/moment')
 const reqLimit = require('../middleware/ratelimt')
 const { jwtAuthToken } = require('../middleware/login')
 
@@ -12,5 +12,8 @@ momentRouter.post('/:momentId/addFile', jwtAuthToken, addFile)
 
 // 获取动态数据
 momentRouter.get('/', getMomentData)
+
+// 根据用户id获取动态数据
+momentRouter.get('/:userId', getMomentDataByUId)
 
 module.exports = momentRouter

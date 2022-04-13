@@ -72,6 +72,18 @@ class MomentContrller {
       console.log(error);
     }
   }
+
+  async getMomentDataByUId(ctx, next) {
+    const { offset, momentStatus } = ctx.query
+    const { userId } = ctx.params
+    const result = await MomentService.getMomentDataByUIdAndStatus(userId, offset, momentStatus)
+    const hasMore = result.length >= 10 || false
+    ctx.body = {
+      message: '获取成功',
+      result,
+      hasMore
+    }
+  }
 }
 
 module.exports = new MomentContrller()
