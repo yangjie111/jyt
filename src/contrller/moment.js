@@ -72,7 +72,6 @@ class MomentContrller {
       console.log(error);
     }
   }
-
   async getMomentDataByUId(ctx, next) {
     const { offset, momentStatus } = ctx.query
     const { userId } = ctx.params
@@ -82,6 +81,14 @@ class MomentContrller {
       message: '获取成功',
       result,
       hasMore
+    }
+  }
+  async getMomentDetailByMId(ctx, next) {
+    const { momentId } = ctx.params
+    const result = await MomentService.getMomentDetailById(momentId)
+    ctx.body = {
+      result,
+      message: '获取成功'
     }
   }
 }

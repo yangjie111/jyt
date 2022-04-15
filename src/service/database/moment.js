@@ -75,6 +75,25 @@ class MomentService {
     const [result] = await connection.execute(statement, [userId, momentStatus])
     return result
   }
+  async getMomentDetailById(id) {
+    const statement = `
+    SELECT 
+    m.id,m.describe,m.contactInfo,m.cost,
+    JSON_OBJECT('userId',m.user_id,'name',us.name,'avatar',CONCAT('${config.APP_HOST}:${config.APP_PORT}','/avatar/',us.avatarIndex)) 'user',
+    (SELECT JSON_ARRAYAGG(f.fileUrl) FROM file f WHERE f.moment_id = ? GROUP BY f.moment_id) 'imgurl',
+    JSON_ARRAYAGG(JSON_OBJECT('tid',t.id,'tname',t.tname)) 'tagList'
+    FROM moment m 
+    JOIN user us ON us.id = m.user_id
+    JOIN moment_tag mt ON mt.moment_id = ? AND m.id = ?
+    JOIN tags t ON t.id = mt.tag_id
+    GROUP BY m.id`
+    try {
+      const [result] = await connection.execute(statement, [id, id, id])
+      return result
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
 module.exports = new MomentService()
