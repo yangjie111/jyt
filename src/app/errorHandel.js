@@ -8,6 +8,7 @@
  * 1204：该账号已过期
  * 1205：该学号已经被绑定
  * 1206：参数错误
+ * 1301：删除动态失败
  * 1400：服务繁忙
  */
 
@@ -69,6 +70,11 @@ function errorHandel(error, ctx) {
       message = '内容错误'
       status = 412
       tokenStatus = { errCode: 1206 }
+      break;
+    case errorType.DELETE_ERROR:
+      message = '删除失败'
+      status = 403
+      tokenStatus = { errCode: 1301 }
       break;
 
     default:

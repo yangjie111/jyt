@@ -7,7 +7,10 @@ const {
   addFile,
   getMomentData,
   getMomentDataByUId,
-  getMomentDetailByMId
+  getMomentDetailByMId,
+  deleteMomentByMId,
+  momentCollect,
+  getCollectMomentByUId
 } = require('../contrller/moment')
 const reqLimit = require('../middleware/ratelimt')
 const { jwtAuthToken } = require('../middleware/login')
@@ -25,5 +28,12 @@ momentRouter.get('/:userId', getMomentDataByUId)
 
 // 根据动态id获取单个动态的详情
 momentRouter.get('/detail/:momentId', getMomentDetailByMId)
+
+// 根据动态id删除数据
+momentRouter.delete('/:momentId', deleteMomentByMId)
+
+// 动态收藏路由
+momentRouter.post('/:momentId/:collectCount', jwtAuthToken, momentCollect)
+momentRouter.get('/collect/:userId', getCollectMomentByUId)
 
 module.exports = momentRouter

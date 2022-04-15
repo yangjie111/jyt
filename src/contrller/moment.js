@@ -59,9 +59,9 @@ class MomentContrller {
    * 获取数据
   */
   async getMomentData(ctx, next) {
-    const { offset, tagId } = ctx.query
+    const { offset, tagId, userId } = ctx.query
     try {
-      const result = await MomentService.getMomentDataByStatus(offset, tagId)
+      const result = await MomentService.getMomentDataByStatus(offset, tagId, userId)
       const hasMore = result.length >= 10 || false
       ctx.body = {
         result,
@@ -85,8 +85,59 @@ class MomentContrller {
   }
   async getMomentDetailByMId(ctx, next) {
     const { momentId } = ctx.params
-    const result = await MomentService.getMomentDetailById(momentId)
+    const { userId } = ctx.query
+    const result = await MomentService.getMomentDetailById(momentId, userId)
     ctx.body = {
+      result,
+      message: '获取成功'
+    }
+  }
+
+  /**
+   * 删除数据
+  */
+  async deleteMomentByMId(ctx, next) {
+    const momentId = ctx.params.momentId
+    try {
+      await MomentService.deleteMomentByMId(momentId)
+      ctx.body = {
+        message: '删除成功'
+      }
+    } catch (error) {
+      const err = new Error(errorType.DELETE_ERROR)
+      ctx.app.emit('error', err, ctx)
+    }
+  }
+
+  /**
+   * 收藏 
+  */
+  async momentCollect(ctx, next) {
+    const { momentId, collectCount } = ctx.params
+    const { userId, isDelete } = ctx.request.body
+    if (!['1', '-1'].includes(collectCount)) {
+      ctx.status = 400
+      ctx.body = { message: '' }
+      return
+    }
+    try {
+      await MomentService.addCollect(momentId, userId, isDelete)
+      await MomentService.momentCollect(momentId, collectCount)
+      ctx.body = {
+        message: '成功'
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  async getCollectMomentByUId(ctx, next) {
+    const { userId } = ctx.params
+    const { offset } = ctx.query
+    const result = await MomentService.getMomentCollectByUId(userId, offset)
+    const hasMore = result.length >= 10 || false
+    ctx.body = {
+      hasMore,
       result,
       message: '获取成功'
     }
