@@ -113,8 +113,9 @@ class MomentContrller {
    * 收藏 
   */
   async momentCollect(ctx, next) {
+    const { id: userId } = ctx.verifyToken
     const { momentId, collectCount } = ctx.params
-    const { userId, isDelete } = ctx.request.body
+    const { isDelete } = ctx.request.body
     if (!['1', '-1'].includes(collectCount)) {
       ctx.status = 400
       ctx.body = { message: '' }

@@ -32,8 +32,8 @@ momentRouter.get('/detail/:momentId', getMomentDetailByMId)
 // 根据动态id删除数据
 momentRouter.delete('/:momentId', deleteMomentByMId)
 
-// 动态收藏路由
-momentRouter.post('/:momentId/:collectCount', jwtAuthToken, momentCollect)
+// 动态收藏
+momentRouter.post('/:momentId/:collectCount', reqLimit(60000, 12), jwtAuthToken, momentCollect)
 momentRouter.get('/collect/:userId', getCollectMomentByUId)
 
 module.exports = momentRouter

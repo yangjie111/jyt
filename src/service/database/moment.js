@@ -86,14 +86,14 @@ class MomentService {
     (SELECT COUNT(*) FROM collect_user cu WHERE cu.moment_id = m.id AND cu.user_id = ?) 'isCollect',
     JSON_OBJECT('userId',m.user_id,'name',us.name,'avatar',CONCAT('${config.APP_HOST}:${config.APP_PORT}','/avatar/',us.avatarIndex)) 'user',
     (SELECT JSON_ARRAYAGG(f.fileUrl) FROM file f WHERE f.moment_id = ? GROUP BY f.moment_id) 'imgurl',
-    JSON_ARRAYAGG(JSON_OBJECT('tid',t.id,'tname',t.tname)) 'tagList'
+    IF(COUNT(t.id),JSON_ARRAYAGG(JSON_OBJECT('tid',t.id,'tname',t.tname)),JSON_ARRAY()) 'tagList'
     FROM moment m 
-    JOIN user us ON us.id = m.user_id
-    JOIN moment_tag mt ON mt.moment_id = ? AND m.id = ?
-    JOIN tags t ON t.id = mt.tag_id
+    JOIN user us ON m.id = ? AND us.id = m.user_id
+    LEFT JOIN moment_tag mt ON mt.moment_id = ? AND m.id = ?
+    LEFT JOIN tags t ON t.id = mt.tag_id
     GROUP BY m.id`
     try {
-      const [result] = await connection.execute(statement, [userId, momentId, momentId, momentId])
+      const [result] = await connection.execute(statement, [userId, momentId, momentId, momentId, momentId])
       return result
     } catch (error) {
       console.log(error);
