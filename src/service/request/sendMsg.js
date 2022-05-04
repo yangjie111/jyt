@@ -2,13 +2,12 @@ const axios = require('axios')
 const accessToken = require('../../utils/getAccessToken')
 const { getSendMsgUrl } = require('../../utils/spliceUrl')
 
-const sengMsg = async (openId, status, createAtTime) => {
-  console.log(openId);
+const sengMsg = async (openId, status, momentId, createAtTime) => {
   const url = getSendMsgUrl(accessToken.access_token)
   const data = {
     touser: openId,
     template_id: "gW--skfc3AFfJQ0U1mhRFdshrhNwZjSFLt2dMTJGqnI",
-    page: "index",
+    page: `/pages/moment-detail/index?id=${momentId}`,
     miniprogram_state: "developer",
     lang: "zh_CN",
     data: {

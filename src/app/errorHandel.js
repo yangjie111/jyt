@@ -8,6 +8,7 @@
  * 1204：该账号已过期
  * 1205：该学号已经被绑定
  * 1206：参数错误
+ * 1207：手机号与学号不匹配
  * 1301：删除动态失败
  * 1400：服务繁忙
  */
@@ -61,15 +62,20 @@ function errorHandel(error, ctx) {
       status = 401
       tokenStatus = { errCode: 1205 }
       break;
-    case errorType.BUSY_SERVICE:
-      message = '服务繁忙，请稍后重试'
-      status = 408
-      tokenStatus = { errCode: 1400 }
-      break;
     case errorType.PARAMS_ERROR:
       message = '内容错误'
       status = 412
       tokenStatus = { errCode: 1206 }
+      break;
+    case errorType.SNO_MISMATCH:
+      message = '手机号与学号信息不匹配'
+      status = 412
+      tokenStatus = { errCode: 1207 }
+      break;
+    case errorType.BUSY_SERVICE:
+      message = '服务繁忙，请稍后重试'
+      status = 408
+      tokenStatus = { errCode: 1400 }
       break;
     case errorType.DELETE_ERROR:
       message = '删除失败'
